@@ -8,42 +8,50 @@
     <link href="photoswipe/photoswipe.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript" src="photoswipe/klass.min.js"></script>
     <script type="text/javascript" src="photoswipe/code.photoswipe-3.0.4.min.js"></script>
-	
+    <script type="text/javascript" src="date.format/date.format.js"></script>
 	
     <script type="text/javascript">
-        (function(window, PhotoSwipe){
-            document.addEventListener('DOMContentLoaded', function(){
-                var 
-                    options = {},
-                    instance = PhotoSwipe.attach( window.document.querySelectorAll('#Gallery a'), options );
+        var now = new Date();
+        var oneDayMsec = 24 * 3600 * 1000;
+        var nDays = 5;
+        var times = [ "00", "06", "12", "18" ];
+        var urlPrefix = "http://ows.public.sembach.af.mil/gifImages/21OWS_EUROPE_FITL_PROG-STANDARD_"
+        var urlSuffix = ".GIF"
             
-            }, false);
-        }(window, window.Code.PhotoSwipe));
+        function addImage(parent, id) {
+            var img = document.createElement("li");
+            var src = urlPrefix + id + urlSuffix;
+            img.innerHTML = "<a href='" + src + "'>" + id + "</a>";
+            parent.appendChild(img);
+        }
+    
+        function setup() {
+            // Add weather images to our gallery
+            // TODO: thumbnails?
+    
+            var parent = document.getElementById("gallery");
+            for(i=0 ; i < nDays; i++) {
+                var d = new Date(now.getTime() + i * oneDayMsec);
+                for(t in times) {
+                    addImage(parent, d.format("yymmdd") + times[t]);
+                }
+            }
+            
+            // PhotoSwipe setup            
+            (function(window, PhotoSwipe){
+                document.addEventListener('DOMContentLoaded', function(){
+                    var 
+                        options = {},
+                        instance = PhotoSwipe.attach( window.document.querySelectorAll('#gallery a'), options );
+                
+                }, false);
+            }(window, window.Code.PhotoSwipe));
+        }            
         
     </script>
 </head>
 <body>
-
-<ul id="Gallery" class="gallery">
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/001.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/001.jpg" alt="Image 001" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/002.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/002.jpg" alt="Image 002" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/003.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/003.jpg" alt="Image 003" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/004.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/004.jpg" alt="Image 004" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/005.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/005.jpg" alt="Image 005" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/006.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/006.jpg" alt="Image 006" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/007.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/007.jpg" alt="Image 007" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/008.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/008.jpg" alt="Image 008" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/009.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/009.jpg" alt="Image 009" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/010.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/010.jpg" alt="Image 010" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/011.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/011.jpg" alt="Image 011" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/012.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/012.jpg" alt="Image 012" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/013.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/013.jpg" alt="Image 013" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/014.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/014.jpg" alt="Image 014" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/015.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/015.jpg" alt="Image 015" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/016.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/016.jpg" alt="Image 016" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/017.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/017.jpg" alt="Image 017" /></a></li>
-        <li><a href="http://www.photoswipe.com/latest/examples/images/full/018.jpg"><img src="http://www.photoswipe.com/latest/examples/images/thumb/018.jpg" alt="Image 018" /></a></li>
-</ul>
-
+<ul id="gallery" class="gallery"></ul>
+<script type="text/javascript">setup()</script>
 </body>
 </html>
