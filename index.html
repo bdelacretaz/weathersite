@@ -31,19 +31,24 @@
     <script type="text/javascript">
         var now = new Date();
         var oneDayMsec = 24 * 3600 * 1000;
-        var nDays = 4;
-        var times = [ "00", "06", "12", "18" ];
-        var urlPrefix = "http://ows.public.sembach.af.mil/gifImages/21OWS_EUROPE_FITL_PROG-STANDARD_"
+        
+        // define how many days of data to show, and the 
+        // times for each one of them 
+        var times = [ 
+            [ "00", "06", "12", "18" ], 
+            [ "00", "12" ], 
+            [ "00", "12" ], 
+            [ "12" ], 
+            [ "12" ] 
+        ];
+
+        var chartTypes = [ "STANDARD", "BRIEFING" ];        
+        var urlPrefix = "http://ows.public.sembach.af.mil/gifImages/21OWS_EUROPE_FITL_PROG-" + chartTypes[0] + "_"
         var urlSuffix = ".GIF"
         
-        // original images are 900x858
-        var imgHeight = 900;
-        var imgWidth = 858;
-            
         function addImage(parent, id, caption) {
             var img = document.createElement("li");
             var src = urlPrefix + id + urlSuffix;
-            // w/h causes problems on android? var html = "<img width='" + imgWidth + "' height='" + imgHeight + "' src='" + src + "'/>";
             var html = "<img src='" + src + "'/>";
             html += "\n";
             html += "<p class='flex-caption'>" + caption + "</p>";
@@ -51,28 +56,23 @@
             parent.appendChild(img);
         }
     
-        function setup() {
-            // Add weather images to our gallery
-            // TODO: thumbnails? lazy loading?
-    
+        $(window).load(function() {
             var parent = document.getElementById("gallery");
-            for(i=0 ; i < nDays; i++) {
+            for(i in times) {
                 var d = new Date(now.getTime() + i * oneDayMsec);
-                for(t in times) {
-                    var id = d.format("yymmdd") + times[t];
-                    var caption = d.format("dd.mm.yyyy ") + times[t] + "Z";
+                for(t in times[i]) {
+                    var time = times[i][t];
+                    var id = d.format("yymmdd") + time;
+                    var caption = d.format("dd.mm.yyyy ") + time + "Z";
                     addImage(parent, id, caption);
                 }
             }
-            
-            // FlexSlider setup
-            $(window).load(function() {
-                $('.flexslider').flexslider({
-                    animation: "fade",
-                    slideshow: false
-                });
-            });            
-        }            
+        
+            $('.flexslider').flexslider({
+                animation: "fade",
+                slideshow: false
+            });
+        });            
         
     </script>
 </head>
@@ -82,6 +82,5 @@
     <ul id="gallery" class="slides"></ul>
 </div>
     
-<script type="text/javascript">setup()</script>
 </body>
 </html>
