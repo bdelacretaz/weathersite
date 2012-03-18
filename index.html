@@ -1,57 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Bertrand's Weather Minisite</title>
+	<title>Bertrand's Weather Loop</title>
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 
-    <link href="photoswipe/photoswipe.css" type="text/css" rel="stylesheet" />
-    <script type="text/javascript" src="photoswipe/klass.min.js"></script>
-    <script type="text/javascript" src="photoswipe/code.photoswipe-3.0.4.min.js"></script>
-    <script type="text/javascript" src="date.format/date.format.js"></script>
+    <link rel="stylesheet" href="flexslider/flexslider.css" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script src="flexslider/jquery.flexslider-min.js"></script>
+    <script src="date.format/date.format.js"></script>
+    
+    <style type="text/css">
+    .flex-caption {
+        width: 98%; 
+        padding: 1%;
+        margin: 0; 
+        position: absolute; 
+        left: 0; 
+        top: 0;
+        height:1em; 
+        background: rgba(0,0,0,.6); 
+        color: white; 
+        text-shadow: 0 -1px 0 rgba(0,0,0,.9); 
+        font-size: 100%;
+        font-family: sans-serif;
+        margin-bottom:50px; 
+    }
+    </style>
 	
     <script type="text/javascript">
         var now = new Date();
         var oneDayMsec = 24 * 3600 * 1000;
-        var nDays = 5;
+        var nDays = 4;
         var times = [ "00", "06", "12", "18" ];
         var urlPrefix = "http://ows.public.sembach.af.mil/gifImages/21OWS_EUROPE_FITL_PROG-STANDARD_"
         var urlSuffix = ".GIF"
+        
+        // original images are 900x858
+        var imgHeight = 900;
+        var imgWidth = 858;
             
-        function addImage(parent, id) {
+        function addImage(parent, id, caption) {
             var img = document.createElement("li");
             var src = urlPrefix + id + urlSuffix;
-            img.innerHTML = "<a href='" + src + "'>" + id + "</a>";
+            // w/h causes problems on android? var html = "<img width='" + imgWidth + "' height='" + imgHeight + "' src='" + src + "'/>";
+            var html = "<img src='" + src + "'/>";
+            html += "\n";
+            html += "<p class='flex-caption'>" + caption + "</p>";
+            img.innerHTML = html;
             parent.appendChild(img);
         }
     
         function setup() {
             // Add weather images to our gallery
-            // TODO: thumbnails?
+            // TODO: thumbnails? lazy loading?
     
             var parent = document.getElementById("gallery");
             for(i=0 ; i < nDays; i++) {
                 var d = new Date(now.getTime() + i * oneDayMsec);
                 for(t in times) {
-                    addImage(parent, d.format("yymmdd") + times[t]);
+                    var id = d.format("yymmdd") + times[t];
+                    var caption = d.format("dd.mm.yyyy ") + times[t] + "Z";
+                    addImage(parent, id, caption);
                 }
             }
             
-            // PhotoSwipe setup            
-            (function(window, PhotoSwipe){
-                document.addEventListener('DOMContentLoaded', function(){
-                    var 
-                        options = {},
-                        instance = PhotoSwipe.attach( window.document.querySelectorAll('#gallery a'), options );
-                
-                }, false);
-            }(window, window.Code.PhotoSwipe));
+            // FlexSlider setup
+            $(window).load(function() {
+                $('.flexslider').flexslider({
+                    animation: "fade",
+                    slideshow: false
+                });
+            });            
         }            
         
     </script>
 </head>
 <body>
-<ul id="gallery" class="gallery"></ul>
+
+<div class="flexslider">
+    <ul id="gallery" class="slides"></ul>
+</div>
+    
 <script type="text/javascript">setup()</script>
 </body>
 </html>
